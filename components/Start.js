@@ -87,7 +87,6 @@ const Start = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
     alignItems: "center",
   },
   title: {
@@ -98,14 +97,9 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   textInput: {
-    // width: "88%",
-    // padding: 15,
-    // borderWidth: 1,
-    // marginTop: 15,
-    // marginBottom: 15,
     fontSize: 16,
-    fontWeight: 300,
     color: "#757083",
+    fontWeight: 300,
   },
   button: {
     backgroundColor: "#757083",
