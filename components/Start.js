@@ -1,4 +1,7 @@
+// useState and useEffect from React
 import { useState } from "react";
+
+// UI Components from React Native
 import {
   StyleSheet,
   View,
@@ -9,28 +12,34 @@ import {
   Image,
 } from "react-native";
 
+// Start screen component
 const Start = ({ navigation }) => {
+  // Name variable to be passed to and displayed at top of chat UI
   const [name, setName] = useState("");
+  // Variable for colour user selects from options that chat background UI will be changed to
   const [color, setColor] = useState("");
 
+  // Sets color to #090C08 if user selects button with this onPress function
   function handleColorPick1() {
     setColor("#090C08");
   }
 
+  // Sets color to #474056 if user selects button with this onPress function
   function handleColorPick2() {
     setColor("#474056");
   }
 
+  // Sets color to #8A95A5 if user selects button with this onPress function
   function handleColorPick3() {
     setColor("#8A95A5");
   }
 
+  // Sets color to #B9C6AE if user selects button with this onPress function
   function handleColorPick4() {
     setColor("#B9C6AE");
   }
 
-  console.log(color);
-
+  // The start screen JSX component returned for user to see
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -71,6 +80,10 @@ const Start = ({ navigation }) => {
 
           <TouchableOpacity
             title="Start Chatting"
+            accessible={true}
+            accessibilityLabel="More options"
+            accessibilityHint="Lets you choose to send an image or your geolocation."
+            accessibilityRole="button"
             onPress={() =>
               navigation.navigate("Chat", { name: name, color: color })
             }
