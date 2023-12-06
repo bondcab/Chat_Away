@@ -1,6 +1,9 @@
 // useState and useEffect from React
 import { useState } from "react";
 
+// FireBase Auth
+import { getAuth, signInAnonymously } from "firebase/auth";
+
 // UI Components from React Native
 import {
   StyleSheet,
@@ -9,7 +12,7 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
-  Image,
+  Alert,
 } from "react-native";
 
 // Start screen component
@@ -19,6 +22,24 @@ const Start = ({ navigation }) => {
   // Variable for colour user selects from options that chat background UI will be changed to
   const [color, setColor] = useState("");
 
+  // Authentication
+  const auth = getAuth();
+
+  // Sign in Anonymously function
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then((result) => {
+        navigation.navigate("Chat", {
+          userID: result.user.uid,
+          name: name,
+          color: color,
+        });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try again later.");
+      });
+  };
   // Sets color to #090C08 if user selects button with this onPress function
   function handleColorPick1() {
     setColor("#090C08");
@@ -84,9 +105,7 @@ const Start = ({ navigation }) => {
             accessibilityLabel="More options"
             accessibilityHint="Lets you choose to send an image or your geolocation."
             accessibilityRole="button"
-            onPress={() =>
-              navigation.navigate("Chat", { name: name, color: color })
-            }
+            onPress={signInUser}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Start Chatting</Text>
@@ -136,25 +155,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#090C08",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   color_02: {
     backgroundColor: "#474056",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   color_03: {
     backgroundColor: "#8A95A5",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   color_04: {
     backgroundColor: "#B9C6AE",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   colorContainer: {
     display: "flex",
