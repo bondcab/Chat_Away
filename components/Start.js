@@ -1,4 +1,10 @@
+// useState and useEffect from React
 import { useState } from "react";
+
+// FireBase Auth
+import { getAuth, signInAnonymously } from "firebase/auth";
+
+// UI Components from React Native
 import {
   StyleSheet,
   View,
@@ -6,31 +12,55 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
-  Image,
+  Alert,
 } from "react-native";
 
+// Start screen component
 const Start = ({ navigation }) => {
+  // Name variable to be passed to and displayed at top of chat UI
   const [name, setName] = useState("");
+  // Variable for colour user selects from options that chat background UI will be changed to
   const [color, setColor] = useState("");
 
+  // Authentication
+  const auth = getAuth();
+
+  // Sign in Anonymously function
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then((result) => {
+        navigation.navigate("Chat", {
+          userID: result.user.uid,
+          name: name,
+          color: color,
+        });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try again later.");
+      });
+  };
+  // Sets color to #090C08 if user selects button with this onPress function
   function handleColorPick1() {
     setColor("#090C08");
   }
 
+  // Sets color to #474056 if user selects button with this onPress function
   function handleColorPick2() {
     setColor("#474056");
   }
 
+  // Sets color to #8A95A5 if user selects button with this onPress function
   function handleColorPick3() {
     setColor("#8A95A5");
   }
 
+  // Sets color to #B9C6AE if user selects button with this onPress function
   function handleColorPick4() {
     setColor("#B9C6AE");
   }
 
-  console.log(color);
-
+  // The start screen JSX component returned for user to see
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -71,9 +101,11 @@ const Start = ({ navigation }) => {
 
           <TouchableOpacity
             title="Start Chatting"
-            onPress={() =>
-              navigation.navigate("Chat", { name: name, color: color })
-            }
+            accessible={true}
+            accessibilityLabel="More options"
+            accessibilityHint="Lets you choose to send an image or your geolocation."
+            accessibilityRole="button"
+            onPress={signInUser}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Start Chatting</Text>
@@ -123,25 +155,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#090C08",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   color_02: {
     backgroundColor: "#474056",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   color_03: {
     backgroundColor: "#8A95A5",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   color_04: {
     backgroundColor: "#B9C6AE",
     width: 50,
     height: 50,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
   colorContainer: {
     display: "flex",
