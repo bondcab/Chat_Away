@@ -1,10 +1,5 @@
-// useState and useEffect from React
 import { useState } from "react";
-
-// FireBase Auth
 import { getAuth, signInAnonymously } from "firebase/auth";
-
-// UI Components from React Native
 import {
   StyleSheet,
   View,
@@ -15,7 +10,6 @@ import {
   Alert,
 } from "react-native";
 
-// Start screen component
 const Start = ({ navigation }) => {
   // Name variable to be passed to and displayed at top of chat UI
   const [name, setName] = useState("");
@@ -78,7 +72,6 @@ const Start = ({ navigation }) => {
               placeholder="Your Name"
             />
           </View>
-
           <Text style={styles.colorText}>Choose Background Color</Text>
           <View style={styles.colorContainer}>
             <TouchableOpacity
@@ -131,7 +124,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     color: "#757083",
-    fontWeight: 300,
+    fontWeight: "300",
   },
   button: {
     backgroundColor: "#757083",
