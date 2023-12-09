@@ -4,7 +4,6 @@ import {
   collection,
   addDoc,
   onSnapshot,
-  where,
   query,
   orderBy,
 } from "firebase/firestore";
@@ -12,11 +11,14 @@ import {
 // UI Components from React Native
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 
+// Offline storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 // Gifted chat library for creating chat UI
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 
 // Chat Component
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
   // name and colour passed from start screen
   const { name, color, userID } = route.params;
   // Array to store message history
@@ -43,25 +45,55 @@ const Chat = ({ route, navigation, db }) => {
     );
   };
 
+  // Changed input toolbar
+  const renderInputToolbar = (props) => {
+    if (isConnected) return <InputToolbar {...props} />;
+    else return null;
+  };
+
+  // Add messages to local storage
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const loadCachedMessages = async () => {
+    const cachedMessages = (await AsyncStorage.getItem("messages")) || [];
+    setMessages(JSON.parse(cachedMessages));
+  };
+
+  let unsubMessages;
+
   // Once component is mounted the message history is set
   useEffect(() => {
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    if (isConnected === true) {
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when useEffect code is re-executed
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
 
-    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
-      let newMessages = [];
-      documentsSnapshot.forEach((doc) => {
-        newMessages.push({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+
+      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+        let newMessages = [];
+        documentsSnapshot.forEach((doc) => {
+          newMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          });
         });
+        cacheMessages(newMessages);
+        setMessages(newMessages);
       });
-      setMessages(newMessages);
-    });
+    } else loadCachedMessages();
+
     return () => {
       if (unsubMessages) unsubMessages();
     };
-  }, []);
+  }, [isConnected]);
 
   // Once component is mounted users name is displayed at top of UI from prop given from start screen imput element
   useEffect(() => {
@@ -75,6 +107,7 @@ const Chat = ({ route, navigation, db }) => {
         messages={messages}
         renderBubble={renderBubble}
         onSend={(messages) => onSend(messages)}
+        renderInputToolbar={renderInputToolbar}
         user={{
           _id: userID,
           name: name,
