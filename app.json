@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "exercise_5.1",
-    "slug": "exercise_5.1",
+    "name": "chatAway",
+    "slug": "chatAway",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
