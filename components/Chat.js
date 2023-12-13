@@ -1,5 +1,5 @@
 // useState and useEffect from React
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
@@ -8,8 +8,16 @@ import {
   orderBy,
 } from "firebase/firestore";
 
+import MapView from "react-native-maps";
+
 // UI Components from React Native
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+} from "react-native";
 
 // Offline storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,8 +25,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Gifted chat library for creating chat UI
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 
+//Custom Actions component
+import CustomActions from "./CustomActions";
+
 // Chat Component
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   // name and colour passed from start screen
   const { name, color, userID } = route.params;
   // Array to store message history
@@ -47,7 +58,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 
   // Changed input toolbar
   const renderInputToolbar = (props) => {
-    if (isConnected) return <InputToolbar {...props} />;
+    if (isConnected === true) return <InputToolbar {...props} />;
     else return null;
   };
 
@@ -66,6 +77,17 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   };
 
   let unsubMessages;
+
+  function photos() {
+    return (
+      <TouchableOpacity onPress={pickImage}>
+        <Image
+          source={require("./photos.png")}
+          style={{ width: 60, height: 60 }}
+        />
+      </TouchableOpacity>
+    );
+  }
 
   // Once component is mounted the message history is set
   useEffect(() => {
@@ -100,19 +122,56 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     navigation.setOptions({ title: name });
   }, []);
 
+  // Temp functions
+  function pickImage() {
+    console.log("pickImage");
+  }
+
+  // Renders MapView if currentMessage contains location data
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderCustomActions = (props) => {
+    return <CustomActions storage={storage} userID={userID} {...props} />;
+  };
+
   // The chat JSX component returned for user to see
   return (
     <View style={[styles.container, { backgroundColor: color }]}>
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
-        onSend={(messages) => onSend(messages)}
         renderInputToolbar={renderInputToolbar}
+        onSend={(messages) => onSend(messages)}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         user={{
           _id: userID,
-          name: name,
+          name,
         }}
       />
+      {/* {image && (
+        <Image
+          source={{ uri: image.uri }}
+          style={{ width: 200, height: 200 }}
+        />
+      )} */}
+
       {Platform.OS === "android" ? (
         <KeyboardAvoidingView behavior="height" />
       ) : null}
