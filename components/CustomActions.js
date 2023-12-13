@@ -4,6 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { uploadBytes, ref, getDownloadURL, storage } from "firebase/storage";
 
+// Custom actions component. Allows the adding of location and images to chat
 function CustomActions({
   wrapperStyle,
   iconTextStyle,
@@ -122,46 +123,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-// const pickImage = async () => {
-//   let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-//   if (permissions?.granted) {
-//     let result = await ImagePicker.launchImageLibraryAsync();
-
-//     if (!result.canceled) setImage(result.assets[0]);
-//     else setImage(null);
-//   }
-// };
-
-// const takePhoto = async () => {
-//   const [image, setImage] = useState(null);
-//   const [location, setLocation] = useState(null);
-//   let permissions = await ImagePicker.requestCameraPermissionsAsync();
-
-//   if (permissions?.granted) {
-//     let result = await ImagePicker.launchCameraAsync();
-
-//     if (!result.canceled) {
-//       let mediaLibraryPermissions =
-//         await MediaLibrary.requestPermissionsAsync();
-
-//       if (mediaLibraryPermissions?.granted)
-//         await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
-
-//       setImage(result.assets[0]);
-//     } else setImage(null);
-//   }
-// };
-
-// const getLocation = async () => {
-//   let permissions = await Location.requestForegroundPermissionsAsync();
-
-//   if (permissions?.granted) {
-//     const location = await Location.getCurrentPositionAsync({});
-//     setLocation(location);
-//   } else {
-//     Alert.alert("Permissions to read location aren't granted");
-//   }
-// };
-// }
