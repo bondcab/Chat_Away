@@ -64,7 +64,6 @@ const Start = ({ navigation }) => {
         <Text style={styles.title}>Chat Away</Text>
         <View style={styles.lowerContainer}>
           <View style={styles.inputContainer}>
-            {/* <Image source={require("./icon.svg")} style={styles.icon}></Image> */}
             <TextInput
               style={styles.textInput}
               value={name}
