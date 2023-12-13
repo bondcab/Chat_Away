@@ -12,8 +12,12 @@ import {
 import { initializeApp } from "firebase/app";
 import Start from "./components/Start";
 import Chat from "./components/Chat";
+import { getStorage } from "firebase/storage";
+import { LogBox } from "react-native";
 
 const Stack = createNativeStackNavigator();
+
+LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 
 export default function App() {
   const firebaseConfig = {
@@ -40,6 +44,7 @@ export default function App() {
   const app = initializeApp(firebaseConfig);
 
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   return (
     <NavigationContainer>
@@ -49,6 +54,7 @@ export default function App() {
           {(props) => (
             <Chat
               db={db}
+              storage={storage}
               isConnected={connectionStatus.isConnected}
               {...props}
             />
