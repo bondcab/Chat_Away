@@ -78,17 +78,6 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
   let unsubMessages;
 
-  function photos() {
-    return (
-      <TouchableOpacity onPress={pickImage}>
-        <Image
-          source={require("./photos.png")}
-          style={{ width: 60, height: 60 }}
-        />
-      </TouchableOpacity>
-    );
-  }
-
   // Once component is mounted the message history is set
   useEffect(() => {
     if (isConnected === true) {
