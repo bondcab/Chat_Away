@@ -1,22 +1,35 @@
 // useState and useEffect from React
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
   onSnapshot,
-  where,
   query,
   orderBy,
 } from "firebase/firestore";
 
+import MapView from "react-native-maps";
+
 // UI Components from React Native
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+} from "react-native";
+
+// Offline storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Gifted chat library for creating chat UI
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+
+//Custom Actions component
+import CustomActions from "./CustomActions";
 
 // Chat Component
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   // name and colour passed from start screen
   const { name, color, userID } = route.params;
   // Array to store message history
@@ -43,30 +56,88 @@ const Chat = ({ route, navigation, db }) => {
     );
   };
 
+  // Changed input toolbar
+  const renderInputToolbar = (props) => {
+    if (isConnected === true) return <InputToolbar {...props} />;
+    else return null;
+  };
+
+  // Add messages to local storage
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const loadCachedMessages = async () => {
+    const cachedMessages = (await AsyncStorage.getItem("messages")) || [];
+    setMessages(JSON.parse(cachedMessages));
+  };
+
+  let unsubMessages;
+
   // Once component is mounted the message history is set
   useEffect(() => {
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    if (isConnected === true) {
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when useEffect code is re-executed
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
 
-    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
-      let newMessages = [];
-      documentsSnapshot.forEach((doc) => {
-        newMessages.push({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+
+      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+        let newMessages = [];
+        documentsSnapshot.forEach((doc) => {
+          newMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          });
         });
+        cacheMessages(newMessages);
+        setMessages(newMessages);
       });
-      setMessages(newMessages);
-    });
+    } else loadCachedMessages();
+
     return () => {
       if (unsubMessages) unsubMessages();
     };
-  }, []);
+  }, [isConnected]);
 
   // Once component is mounted users name is displayed at top of UI from prop given from start screen imput element
   useEffect(() => {
     navigation.setOptions({ title: name });
   }, []);
+
+  // Temp functions
+  function pickImage() {
+    console.log("pickImage");
+  }
+
+  // Renders MapView if currentMessage contains location data
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderCustomActions = (props) => {
+    return <CustomActions storage={storage} userID={userID} {...props} />;
+  };
 
   // The chat JSX component returned for user to see
   return (
@@ -74,12 +145,22 @@ const Chat = ({ route, navigation, db }) => {
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
         onSend={(messages) => onSend(messages)}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         user={{
           _id: userID,
-          name: name,
+          name,
         }}
       />
+      {/* {image && (
+        <Image
+          source={{ uri: image.uri }}
+          style={{ width: 200, height: 200 }}
+        />
+      )} */}
+
       {Platform.OS === "android" ? (
         <KeyboardAvoidingView behavior="height" />
       ) : null}
