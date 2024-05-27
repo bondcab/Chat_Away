@@ -147,7 +147,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
         onSend={(messages) => onSend(messages)}
         renderActions={renderCustomActions}
         renderCustomView={renderCustomView}
-        minInputToolbarHeight={200}
+        minInputToolbarHeight={100}
         user={{
           _id: userID,
           name,
@@ -160,7 +160,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
         <KeyboardAvoidingView behavior="height" />
       ) : null}
       {Platform.OS === "ios" ? (
-        <KeyboardAvoidingView behavior="padding" />
+        <KeyboardAvoidingView behavior="position" />
       ) : null}
     </View>
   );
@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
   },
   input: {
     minHeight: 80,
-
     justifyContent: "center",
     alignItems: "center",
   },

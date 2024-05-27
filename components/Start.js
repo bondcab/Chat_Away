@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Alert,
+  Platform,
 } from "react-native";
 
 const Start = ({ navigation }) => {
@@ -19,6 +20,18 @@ const Start = ({ navigation }) => {
 
   // Authentication
   const auth = getAuth();
+
+  function handleOnFocus() {
+    if (Platform.OS === "ios") {
+      setKeyboardActive(true);
+    }
+  }
+
+  function handleOnBlur() {
+    if (Platform.OS === "ios") {
+      setKeyboardActive(false);
+    }
+  }
 
   // Sign in Anonymously function
   const signInUser = () => {
@@ -66,8 +79,12 @@ const Start = ({ navigation }) => {
         <View
           style={[
             styles.lowerContainer,
-            { alignSelf: keyboardActive ? "center" : "flex-end" },
-            { transform: [{ translateY: keyboardActive ? -150 : -50 }] },
+            {
+              alignSelf: keyboardActive ? "center" : "flex-end",
+            },
+            {
+              transform: [{ translateY: keyboardActive ? -150 : -50 }],
+            },
           ]}
         >
           <View style={styles.inputContainer}>
@@ -76,8 +93,8 @@ const Start = ({ navigation }) => {
               value={name}
               onChangeText={setName}
               placeholder="Your Name"
-              onFocus={() => setKeyboardActive(true)}
-              onBlur={() => setKeyboardActive(false)}
+              onFocus={handleOnFocus}
+              onBlur={handleOnBlur}
             />
           </View>
           <Text style={styles.colorText}>Choose Background Color</Text>
@@ -136,7 +153,8 @@ const Start = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 50,
@@ -155,7 +173,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#757083",
     width: "88%",
-    height: "16%",
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
@@ -218,9 +236,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "88%",
-    height: "44%",
     borderRadius: 20,
     position: "absolute",
+    paddingBottom: 50,
+    paddingTop: 40,
   },
   inputContainer: {
     width: "88%",
