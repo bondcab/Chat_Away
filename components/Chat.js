@@ -11,13 +11,7 @@ import {
 import MapView from "react-native-maps";
 
 // UI Components from React Native
-import {
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-} from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 
 // Offline storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -56,9 +50,13 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     );
   };
 
+  const CustomInputToolbar = (props) => {
+    return <InputToolbar {...props} containerStyle={styles.input} />;
+  };
+
   // Changed input toolbar
   const renderInputToolbar = (props) => {
-    if (isConnected === true) return <InputToolbar {...props} />;
+    if (isConnected === true) return <CustomInputToolbar {...props} />;
     else return null;
   };
 
@@ -149,17 +147,14 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
         onSend={(messages) => onSend(messages)}
         renderActions={renderCustomActions}
         renderCustomView={renderCustomView}
+        minInputToolbarHeight={200}
         user={{
           _id: userID,
           name,
+          avatar:
+            "https://firebasestorage.googleapis.com/v0/b/chat-away-6a66a.appspot.com/o/profile_pictures%2Favatar_01.jpeg?alt=media&token=7896334f-96a9-4af6-846e-a987fde1c5c0",
         }}
       />
-      {/* {image && (
-        <Image
-          source={{ uri: image.uri }}
-          style={{ width: 200, height: 200 }}
-        />
-      )} */}
 
       {Platform.OS === "android" ? (
         <KeyboardAvoidingView behavior="height" />
@@ -179,6 +174,12 @@ const styles = StyleSheet.create({
   chatHeading: {
     color: "white",
     fontSize: 50,
+  },
+  input: {
+    minHeight: 80,
+
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

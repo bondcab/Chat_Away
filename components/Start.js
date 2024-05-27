@@ -15,6 +15,7 @@ const Start = ({ navigation }) => {
   const [name, setName] = useState("");
   // Variable for colour user selects from options that chat background UI will be changed to
   const [color, setColor] = useState("");
+  const [keyboardActive, setKeyboardActive] = useState(false);
 
   // Authentication
   const auth = getAuth();
@@ -62,31 +63,55 @@ const Start = ({ navigation }) => {
         style={styles.image}
       >
         <Text style={styles.title}>Chat Away</Text>
-        <View style={styles.lowerContainer}>
+        <View
+          style={[
+            styles.lowerContainer,
+            { alignSelf: keyboardActive ? "center" : "flex-end" },
+            { transform: [{ translateY: keyboardActive ? -150 : -50 }] },
+          ]}
+        >
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.textInput}
               value={name}
               onChangeText={setName}
               placeholder="Your Name"
+              onFocus={() => setKeyboardActive(true)}
+              onBlur={() => setKeyboardActive(false)}
             />
           </View>
           <Text style={styles.colorText}>Choose Background Color</Text>
           <View style={styles.colorContainer}>
             <TouchableOpacity
-              style={styles.color_01}
+              style={[
+                styles.color_01,
+                { borderColor: color == "#090C08" ? "#44a6c6" : "white" },
+                { borderWidth: color == "#090C08" ? 5 : 0 },
+              ]}
               onPress={handleColorPick1}
             ></TouchableOpacity>
             <TouchableOpacity
-              style={styles.color_02}
+              style={[
+                styles.color_02,
+                { borderColor: color == "#474056" ? "#44a6c6" : "white" },
+                { borderWidth: color == "#474056" ? 5 : 0 },
+              ]}
               onPress={handleColorPick2}
             ></TouchableOpacity>
             <TouchableOpacity
-              style={styles.color_03}
+              style={[
+                styles.color_03,
+                { borderColor: color == "#8A95A5" ? "#44a6c6" : "white" },
+                { borderWidth: color == "#8A95A5" ? 5 : 0 },
+              ]}
               onPress={handleColorPick3}
             ></TouchableOpacity>
             <TouchableOpacity
-              style={styles.color_04}
+              style={[
+                styles.color_04,
+                { borderColor: color == "#B9C6AE" ? "#44a6c6" : "white" },
+                { borderWidth: color == "#B9C6AE" ? 5 : 0 },
+              ]}
               onPress={handleColorPick4}
             ></TouchableOpacity>
           </View>
@@ -119,6 +144,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     marginBottom: 240,
     color: "#FFFFFF",
+    transform: [{ translateY: -135 }],
   },
   textInput: {
     fontSize: 16,
@@ -144,30 +170,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     resizeMode: "cover",
+    flexDirection: "row",
   },
   color_01: {
     backgroundColor: "#090C08",
     width: 50,
     height: 50,
     borderRadius: 50,
+    borderWidth: 5,
   },
   color_02: {
     backgroundColor: "#474056",
     width: 50,
     height: 50,
     borderRadius: 50,
+    borderWidth: 5,
   },
   color_03: {
     backgroundColor: "#8A95A5",
     width: 50,
     height: 50,
     borderRadius: 50,
+    borderWidth: 5,
   },
   color_04: {
     backgroundColor: "#B9C6AE",
     width: 50,
     height: 50,
     borderRadius: 50,
+    borderWidth: 5,
   },
   colorContainer: {
     display: "flex",
@@ -189,6 +220,7 @@ const styles = StyleSheet.create({
     width: "88%",
     height: "44%",
     borderRadius: 20,
+    position: "absolute",
   },
   inputContainer: {
     width: "88%",
