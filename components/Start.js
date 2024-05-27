@@ -114,16 +114,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 45,
+    fontSize: 50,
     marginTop: 100,
-    fontWeight: "bold",
+    fontWeight: "800",
     marginBottom: 240,
     color: "#FFFFFF",
   },
   textInput: {
     fontSize: 16,
-    color: "#757083",
-    fontWeight: "300",
+    color: "black",
+    fontWeight: "600",
+    textAlign: "center",
   },
   button: {
     backgroundColor: "#757083",
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     height: "16%",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 12,
   },
   buttonText: {
     color: "#FFFFFF",
@@ -176,6 +178,8 @@ const styles = StyleSheet.create({
   },
   colorText: {
     marginTop: 20,
+    fontWeight: "600",
+    marginBottom: 10,
   },
   lowerContainer: {
     backgroundColor: "#FFFFFF",
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "88%",
     height: "44%",
+    borderRadius: 20,
   },
   inputContainer: {
     width: "88%",
@@ -192,6 +197,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
     borderColor: "#757083",
+    borderRadius: 15,
   },
   icon: {
     height: 19,
